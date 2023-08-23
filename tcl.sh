@@ -1,151 +1,181 @@
-#!/bin/bash
-
-# disables bloat packages on TCL TVs
-# tested with TCL E17_65E17US
-
-packages_to_uninstall=(
-  "com.tcl.MultiScreenInteraction_TV|Controls TV from mobile (T-Cast), a function which is rarely used by its native API." \
-  "com.tcl.bi|Bi is a couple of sticker-like resources that end up running in the background unused." \
-  "com.google.android.tvrecommendations|Quick notification shortcut when a flash drive is plugged in. Useful for the default laucher. Relatively useless," \
-  "com.google.android.leanbacklauncher.recommendations|Part of the default launcher, responsible for displaying recommendations from TCL/Google partners. Not useful." \
-  "com.tcl.pvr.pvrplayer|TCL MediaPlayer." \
-  "com.tcl.imageplayer|TCL PicturePlayer." \
-  "com.tcl.videoplayer|TCL VideoPlayer." \
-  "com.tcl.audioplayer|TCL AudioPlayer." \
-  "com.tcl.inputmethod.international|TCL input app." \
-  "com.tcl.xian.StartandroidService|TCL Unknown service." \
-  "com.google.android.inputmethod.pinyin|Android phonetic input method." \
-  "com.tcl.appmarket2|Responsible for keeping TCL partner dumps running, as well as doing heavy telemetry. Performs functions in the default non-vital launcher." \
-  "com.tcl.eletronicpolicy|TCL Electronic Policy ??"
+#!/usr/bin/sh
+set -e
+TEMP_DIR=tmp-tcl-debloater
+KODI_URL=https://mirrors.kodi.tv/releases/android/arm/kodi-20.2-Nexus-armeabi-v7a.apk
+FLAUNCHER_URL=https://gitlab.com/flauncher/flauncher/-/releases/0.18.0/downloads/flauncher-0.18.0.apk
+# MATERIALFILES_URL=https://f-droid.org/repo/me.zhanghai.android.files_31.apk
+BLOAT=$(cat <<EOF
+au.com.stan.and
+com.amazon.amazonvideo.livingroom
+com.android.printspooler
+com.android.vending
+com.google.android.feedback
+com.google.android.marvin.talkback
+com.google.android.onetimeinitializer
+com.google.android.partnersetup
+com.google.android.katniss
+com.google.android.tv.assistant
+com.google.android.youtube.tv
+com.google.android.youtube.tvmusic
+com.netflix.ninja
+com.tcl.assistant
+com.tcl.bi
+com.tcl.browser
+com.tcl.channelplus
+com.tcl.dashboard
+com.tcl.esticker
+com.tcl.guard
+com.tcl.inputmethod.international
+com.tcl.MultiScreenInteraction_TV
+com.tcl.notereminder
+com.tcl.overseasappshow
+com.tcl.partnercustomizer
+com.tcl.smartalexa
+com.tcl.t_solo
+com.tcl.tv.tclhome_passive
+com.tcl.ui_mediaCenter
+com.tcl.waterfall.overseas
+com.tcl.xian.StartandroidService
+org.chromium.webview_shell
+tv.wuaki.apptv
+EOF
 )
 
-packages_to_disable=(
-  "com.tcl.appmarket2|Responsible for keeping TCL partner dumps running, as well as doing heavy telemetry. Performs functions in the default non-vital launcher." \
-  "com.tcl.ui_mediaCenter|TCL Media Center. Poorly made and useless." \
-  "com.tcl.notereminder|System messenger, responsible for annoying you when the internet connection drops, and the like." \
-  "com.tcl.partnercustomizer|Packed by TCL, useless, is a contractual obligation of TCL with its partners, forces and privileges content from partners." \
-  "com.tcl.partnercustomizer.resource|Built by TCL. Background engine that restores partner content if you have removed them." \
-  "com.tcl.rc.ota|Remote control firmware update, unused. *SAFE TO DISABLE." \
-  "com.tcl.factory.view|Secret developer menu, runs telemetry." \
-  "com.tcl.esticker|Displays TCL content." \
-  "com.tcl.tvweishi|TVGuard not used bloatware."\
-  "com.tcl.MultiScreenInteraction_TV|Controls TV from mobile (T-Cast), a function which is rarely used by its native API." \
-  "com.tcl.smartalexa|Alexa voice assistant." \
-  "com.google.android.tvrecommendations|Quick notification shortcut when a flash drive is plugged in. Useful for the default laucher. Relatively useless," \
-  "com.google.android.leanbacklauncher.recommendations|Part of the default launcher, responsible for displaying recommendations from TCL/Google partners. Not useful," \
-  "tv.wuaki.apptv|Rakuten TV|??"\
-  "com.iqt.iqqijni.tv.gp.pro|IQQI - Chinese Pro - Chinese Keyboard|??"\
-  "com.android.statementservice|System garbage to agree with spying." \
-  "com.google.android.syncadapters.calendar|CalendarAPI, relatively useless." \
-  "com.google.android.partnersetup|API for google telemetry for their partners." \
-  "com.google.android.syncadapters.contacts|API for contacts, useless on a TV." \
-  "com.google.android.backuptransport|Google API, part of core services, provides background data transport." \
-  "com.android.katniss|Google voice control. If you don't use the control's voice control." \
-  "com.android.printspooler|service for network printing, useless on a TV." \
-  "com.android.providers.contacts|Built into the native Android system, it controls and displays contacts (people) via API. Useless on a TV," \
-  "com.google.android.feedback|Google telemetry." \
-  "com.google.android.tv.bugreportsender|Google telemetry. *RECOMMENDED TO BE DISABLED." \
-  "com.google.android.youtube.tv|Youtube native, displays ads and is not customizable. Recommended to replace it with SmartYoutube." \
-  "com.google.android.tvrecommendations|Quick notification shortcut when a flash drive is plugged in. Useful for the default laucher. Relatively useless," \
-  "com.google.android.tv.remote.service|Updates the firmware of the control, runs services in the background. To date no update has been made available. Relatively useless," \
-  "com.google.android.music|Packaged by Google with similar function as Spotify, Deezer. Not useful, *SECURE DISABLED*." \
-  "com.google.android.videos|Embedded by Google with similar function to Netflix, Amazon Videos, focused on movie rentals. Useless," \
-  "com.google.android.play.games|Boosted by Google, some native games make use of APIs to save data, achievements, scores to the cloud. Relatively useless," \
-  "android.autoinstalls.config.tcl.device|Function that pushes "recommended" automatic configuration." \
-  "com.android.statementservice|System garbage to agree with spying."
-)
+read -p "TCL IP: " TCL_IP
+adb connect $TCL_IP | grep -q fail && echo "Unable to connect to TCL TV" && false
 
-# Connect to TV
-connect_tv(){
-    read -p  "[?] Enter the IP address of your TV and press [Enter] to continue: " IP
+mkdir -p $TEMP_DIR
 
-	ping -c 1 ${IP} >/dev/null
-        if [ "$?" -eq "0" ]; then
-        # Tests if the TV is turned on with debug mode active
-        echo ""
-        echo -e "[+] Connecting to your TV..."
-        adb connect ${IP} >/dev/null
-        if [ "$?" -eq "0" ]; then
-            echo -e "[+] Successfully connected to the TV!"
-            echo ""
-            check_tv
-        else
-            echo -e "[x] Error! Connection failed, Check your IP address"
-            connect_tv
-        fi
-    else
-        echo -e "[x] Error! Connection failed, Check your IP address"
-        connect_tv
-    fi
-}
+echo "Downloading Kodi"
+wget $KODI_URL -O $TEMP_DIR/kodi.apk
+echo "Installing Kodi"
+adb install $TEMP_DIR/kodi.apk
 
-check_tv(){
-    adb devices -l | grep ${IP} | grep device:tcl >/dev/null
-    if [ "$?" -eq "0" ]; then
-        echo -e "[+] TV is TCL"
-        echo ""
-        package_cleanup
-    else
-        echo -e "[x] Error - TV not TCL"
-        read -p "[?] Would you like to continue  [Y/N]" yn
-        case $yn in 
-            [yY] ) package_cleanup;;
-            [nN] ) echo "[+] Exiting";
-                exit;;
-            *)
-                echo "[!] Invalid Option"
-                echo ""
-                check_tv
-                ;;
-        esac
-    fi
-}
+# echo "Downloading FLauncher" 
+# wget $FLAUNCHER_URL -O $TEMP_DIR/flauncher.apk
+# echo "Installing FLaucher"
+# adb install $TEMP_DIR/flauncher.apk
 
-package_cleanup(){
-echo "[+] Remove Packages"
-for package in "${packages_to_uninstall[@]}"
+# echo "Downloading Material Files"
+# wget $MATERIALFILES_URL -O $TEMP_DIR/materialfiles.apk
+# echo "Installing Material Files"
+# adb install $TEMP_DIR/materialfiles.apk
+# echo "Grating permission for Material Files"
+# adb shell pm grant me.zhanghai.android.files android.permission.READ_EXTERNAL_STORAGE
+# adb shell pm grant me.zhanghai.android.files android.permission.WRITE_EXTERNAL_STORAGE
+
+rm -r $TEMP_DIR
+
+for package in $BLOAT
 do
-  package_name="$(echo "$package" | cut -f1 -d"|")"
-  package_desc="$(echo "$package" | cut -f2 -d"|")"
-  adb shell pm list packages -e | grep ${package_name} >/dev/null
-  if [ "$?" -eq "0" ]; then
-    uninstall_output=$(adb shell pm uninstall -k --user 0 ${package_name} 2>/dev/null)
-    if [[ ${uninstall_output} == *"Success"* ]]; then
-        echo "  [+] Removed: ${package_name}"
-        echo "      ${package_desc}"
-    else
-        echo "  [x] Not removed: ${package_name}"
-        echo "      ${package_desc}"
-    fi
-  else
-    echo "  [!] Not Found: ${package_name}"
-  fi
+	echo "Disabling ${package}"
+	adb shell pm uninstall --user 0 $package | true
 done
 
-echo ""
-echo "[+] Disable Packages"
-for package in "${packages_to_disable[@]}"
-do
-  package_name="$(echo "$package" | cut -f1 -d"|")"
-  package_desc="$(echo "$package" | cut -f2 -d"|")"
-  adb shell pm list packages -e | grep ${package_name} >/dev/null
-  if [ "$?" -eq "0" ]; then
-    disable_user_output=$(adb shell pm disable-user --user 0 ${package_name} 2>/dev/null)
-    if [[ ${disable_user_output} == *"Exception"* ]]; then
-        echo "  [!] Exception: ${package_name}"
-        echo "      ${package_desc}"
-    else
-        echo "  [+] Disabled: ${package_name}"
-        echo "      ${package_desc}"
-    fi
-  else
-    echo "  [!] Not found or already disabled: ${package_name}"
-  fi
-done
-}
-clear
-echo "
-TCL Debloat
----------------------
-"
-connect_tv
+# echo "Rebooting TV"
+# adb reboot
+
+# Debloat unsecure elements
+# com.android.providers.calendar
+# com.android.providers.contacts
+# com.android.providers.downloads
+# com.android.providers.media
+# com.android.providers.media.module
+# com.android.providers.settings
+# com.android.providers.tv
+# com.android.providers.userdictionary
+# com.android.proxyhandler
+# com.android.se
+# com.android.settings.intelligence
+# com.android.sharedstoragebackup
+# com.android.shell
+# com.android.soundpicker
+# com.android.statementservice
+# com.android.systemui
+# com.android.tethering.overlay
+# com.android.tethering.overlay.gsi
+# com.android.tv.settings
+# com.android.tv.settings.google.resoverlay
+# com.android.tv.settings.vendor.resoverlay
+# com.android.backupconfirm
+# com.android.bluetooth
+# com.android.camera2
+# com.android.captiveportallogin
+# com.android.certinstaller
+# com.android.companiondevicemanager
+# com.android.cts.ctsshim
+# com.android.cts.priv.ctsshim
+# com.android.dreams.basic
+# com.android.dynsystem
+# com.android.externalstorage
+# com.android.hotspot2.osulogin
+# com.android.htmlviewer
+# com.android.inputdevices
+# com.android.keychain
+# com.android.localtransport
+# com.android.location.fused
+# com.android.messaging
+# com.android.networkstack.inprocess
+# com.android.networkstack.permissionconfig
+# com.android.networkstack.tethering.inprocess
+# com.android.pacprocessor
+# com.android.vpndialogs
+# com.android.wallpaperbackup
+# com.android.wifi.resources
+# com.google.android.apps.mediashell
+# com.google.android.apps.nbu.smartconnect.tv
+# com.google.android.apps.tv.dreamx
+# com.google.android.apps.tv.launcherx
+# com.google.android.ext.services
+# com.google.android.ext.shared
+# com.google.android.feedback
+# com.google.android.gms
+# com.google.android.gsf
+# com.google.android.inputmethod.latin
+# com.google.android.marvin.talkback
+# com.google.android.modulemetadata
+# com.google.android.onetimeinitializer
+# com.google.android.overlay.modules.ext.services
+# com.google.android.overlay.modules.modulemetadata.forframework
+# com.google.android.overlay.modules.permissioncontroller
+# com.google.android.overlay.modules.permissioncontroller.forframework
+# com.google.android.packageinstaller
+# com.google.android.partnersetup
+# com.google.android.permissioncontroller
+# com.google.android.play.games
+# com.google.android.sss.authbridge
+# com.google.android.syncadapters.calendar
+# com.google.android.tts
+# com.google.android.tungsten.setupwraith
+# com.google.android.tv.frameworkpackagestubs
+# com.google.android.tv.remote.service
+# com.google.android.videos
+# com.google.android.webview
+# com.tcl.accessibility
+# com.tcl.android.webview
+# com.tcl.autopair
+# com.tcl.cast.framework
+# com.tcl.common.shortcutmenu
+# com.tcl.dashboard
+# com.tcl.factory.view
+# com.tcl.gallery
+# com.tcl.gamebar
+# com.tcl.hearaid
+# com.tcl.initsetup
+# com.tcl.keyhelp
+# com.tcl.logkit
+# com.tcl.messagebox
+# com.tcl.micmanager
+# com.tcl.miracast
+# com.tcl.providers.config
+# com.tcl.settings
+# com.tcl.suspension
+# com.tcl.system.server
+# com.tcl.tcl_bt_rcu_service
+# com.tcl.tv
+# com.tcl.tvinput
+# com.tcl.ui_mediaCenter
+# com.tcl.useragreement
+# com.tcl.usercenter
+# com.tcl.versionUpdateApp
+# com.tvos
