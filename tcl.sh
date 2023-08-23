@@ -10,30 +10,41 @@ com.amazon.amazonvideo.livingroom
 com.android.printspooler
 com.android.vending
 com.google.android.feedback
+com.google.android.katniss
 com.google.android.marvin.talkback
 com.google.android.onetimeinitializer
 com.google.android.partnersetup
-com.google.android.katniss
 com.google.android.tv.assistant
 com.google.android.youtube.tv
 com.google.android.youtube.tvmusic
 com.netflix.ninja
+com.tcl.android.webview
 com.tcl.assistant
+com.tcl.autopair
 com.tcl.bi
 com.tcl.browser
 com.tcl.channelplus
 com.tcl.dashboard
 com.tcl.esticker
+com.tcl.gallery
 com.tcl.guard
 com.tcl.inputmethod.international
+com.tcl.keyhelp
+com.tcl.messagebox
+com.tcl.micmanager
+com.tcl.miracast
 com.tcl.MultiScreenInteraction_TV
 com.tcl.notereminder
 com.tcl.overseasappshow
 com.tcl.partnercustomizer
 com.tcl.smartalexa
 com.tcl.t_solo
+com.tcl.tcl_bt_rcu_service
 com.tcl.tv.tclhome_passive
 com.tcl.ui_mediaCenter
+com.tcl.useragreement
+com.tcl.usercenter
+com.tcl.versionUpdateApp
 com.tcl.waterfall.overseas
 com.tcl.xian.StartandroidService
 org.chromium.webview_shell
@@ -46,10 +57,10 @@ adb connect $TCL_IP | grep -q fail && echo "Unable to connect to TCL TV" && fals
 
 mkdir -p $TEMP_DIR
 
-echo "Downloading Kodi"
-wget $KODI_URL -O $TEMP_DIR/kodi.apk
-echo "Installing Kodi"
-adb install $TEMP_DIR/kodi.apk
+# echo "Downloading Kodi"
+# wget $KODI_URL -O $TEMP_DIR/kodi.apk
+# echo "Installing Kodi"
+# adb install $TEMP_DIR/kodi.apk
 
 # echo "Downloading FLauncher" 
 # wget $FLAUNCHER_URL -O $TEMP_DIR/flauncher.apk
@@ -75,7 +86,7 @@ done
 # echo "Rebooting TV"
 # adb reboot
 
-# Debloat unsecure elements
+# Debloat - unsecure elements
 # com.android.providers.calendar
 # com.android.providers.contacts
 # com.android.providers.downloads
@@ -128,19 +139,15 @@ done
 # com.google.android.apps.tv.launcherx
 # com.google.android.ext.services
 # com.google.android.ext.shared
-# com.google.android.feedback
 # com.google.android.gms
 # com.google.android.gsf
 # com.google.android.inputmethod.latin
-# com.google.android.marvin.talkback
 # com.google.android.modulemetadata
-# com.google.android.onetimeinitializer
 # com.google.android.overlay.modules.ext.services
 # com.google.android.overlay.modules.modulemetadata.forframework
 # com.google.android.overlay.modules.permissioncontroller
 # com.google.android.overlay.modules.permissioncontroller.forframework
 # com.google.android.packageinstaller
-# com.google.android.partnersetup
 # com.google.android.permissioncontroller
 # com.google.android.play.games
 # com.google.android.sss.authbridge
@@ -152,30 +159,17 @@ done
 # com.google.android.videos
 # com.google.android.webview
 # com.tcl.accessibility
-# com.tcl.android.webview
-# com.tcl.autopair
 # com.tcl.cast.framework
 # com.tcl.common.shortcutmenu
-# com.tcl.dashboard
 # com.tcl.factory.view
-# com.tcl.gallery
 # com.tcl.gamebar
 # com.tcl.hearaid
 # com.tcl.initsetup
-# com.tcl.keyhelp
 # com.tcl.logkit
-# com.tcl.messagebox
-# com.tcl.micmanager
-# com.tcl.miracast
 # com.tcl.providers.config
 # com.tcl.settings
 # com.tcl.suspension
 # com.tcl.system.server
-# com.tcl.tcl_bt_rcu_service
 # com.tcl.tv
 # com.tcl.tvinput
-# com.tcl.ui_mediaCenter
-# com.tcl.useragreement
-# com.tcl.usercenter
-# com.tcl.versionUpdateApp
 # com.tvos
