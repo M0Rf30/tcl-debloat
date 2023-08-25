@@ -83,8 +83,13 @@ do
 	adb shell pm uninstall --user 0 $package | true
 done
 
-# echo "Rebooting TV"
-# adb reboot
+
+# restore uninstalled packages
+# for package in $BLOAT
+# do
+# 	echo "Disabling ${package}"
+# 	adb shell pm install --user 0 $(pm dump $package | awk '/path/{ print $2 }')
+# done
 
 # Debloat - unsecure elements
 # com.android.providers.calendar
