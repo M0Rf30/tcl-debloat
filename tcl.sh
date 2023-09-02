@@ -12,9 +12,6 @@ com.android.cts.priv.ctsshim
 com.android.dreams.basic
 com.android.hotspot2.osulogin
 com.android.htmlviewer
-com.android.providers.downloads
-com.android.providers.media
-com.android.providers.media.module
 com.android.providers.userdictionary
 com.android.settings.intelligence
 com.android.soundpicker
@@ -57,7 +54,9 @@ com.tcl.channelplus
 com.tcl.dashboard
 com.tcl.esticker
 com.tcl.gallery
+com.tcl.gamebar
 com.tcl.guard
+com.tcl.hearaid
 com.tcl.keyhelp
 com.tcl.messagebox
 com.tcl.micmanager
@@ -66,6 +65,7 @@ com.tcl.notereminder
 com.tcl.overseasappshow
 com.tcl.smartalexa
 com.tcl.t_solo
+com.tcl.usercenter
 com.tcl.waterfall.overseas
 EOF
 )
@@ -87,10 +87,10 @@ rm -r $TEMP_DIR
 #   adb shell pm disable-user --user 0 $package | true
 # done
 
-# for package in $BLOAT_EX; do
-#   echo "Disabling ${package}"
-#   adb shell pm disable-user --user 0 $package | true
-# done
+for package in $BLOAT_EX; do
+  echo "Disabling ${package}"
+  adb shell pm disable-user --user 0 $package | true
+done
 
 # restore uninstalled packages
 # for package in $BLOAT
@@ -107,12 +107,14 @@ rm -r $TEMP_DIR
 # done
 
 # Not sure or needed
+# com.android.providers.downloads
+# com.android.providers.media
+# com.android.providers.media.module
 # com.tcl.inputmethod.international
 # com.tcl.miracast # disabling this, no screen sharing
 # com.tcl.partnercustomizer # disabling this, kill rc tv button
 # com.tcl.tcl_bt_rcu_service
 # com.tcl.tv.tclhome_passive
 # com.tcl.useragreement
-# com.tcl.usercenter
 # com.tcl.versionUpdateApp
 # com.tcl.xian.StartandroidService
