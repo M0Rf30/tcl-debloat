@@ -1,6 +1,7 @@
 #!/usr/bin/sh
 set -e
 TEMP_DIR=tmp-tcl-debloater
+FLAUNCHER_URL=https://gitlab.com/api/v4/projects/26632151/packages/generic/flauncher/0.18.0/flauncher-0.18.0.apk
 KODI_URL=https://mirrors.kodi.tv/releases/android/arm/kodi-20.2-Nexus-armeabi-v7a.apk
 SMARTTUBE_URL=https://github.com/yuliskov/SmartTubeNext/releases/download/18.92s/SmartTube_stable_18.92_armeabi-v7a.apk
 
@@ -23,8 +24,8 @@ com.google.android.apps.mediashell
 com.google.android.apps.nbu.smartconnect.tv
 com.google.android.apps.tv.dreamx
 com.google.android.feedback
-com.google.android.gms
-com.google.android.gsf
+# com.google.android.gms # latest V8-R51MT05-LF1V578 requires this for launcherx
+# com.google.android.gsf # latest V8-R51MT05-LF1V578 requires this for launcherx
 com.google.android.inputmethod.latin
 com.google.android.katniss
 com.google.android.marvin.talkback
