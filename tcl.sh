@@ -24,8 +24,8 @@ com.google.android.apps.mediashell
 com.google.android.apps.nbu.smartconnect.tv
 com.google.android.apps.tv.dreamx
 com.google.android.feedback
-# com.google.android.gms # latest V8-R51MT05-LF1V578 requires this for launcherx
-# com.google.android.gsf # latest V8-R51MT05-LF1V578 requires this for launcherx
+com.google.android.gms # V8-R51MT05-LF1V578 requires this for launcherx; not true for V8-R51MT05-LF1V599
+com.google.android.gsf # V8-R51MT05-LF1V578 requires this for launcherx; not true for V8-R51MT05-LF1V599
 com.google.android.inputmethod.latin
 com.google.android.katniss
 com.google.android.marvin.talkback
@@ -50,7 +50,7 @@ EOF
 BLOAT_EX=$(
   cat <<EOF
 com.tcl.assistant
-com.tcl.autopair
+com.tcl.autopair # seems that this disable bt rc pairing
 com.tcl.bi
 com.tcl.browser
 com.tcl.channelplus
@@ -68,7 +68,7 @@ com.tcl.notereminder
 com.tcl.overseasappshow
 com.tcl.smartalexa
 com.tcl.t_solo
-com.tcl.tcl_bt_rcu_service
+com.tcl.tcl_bt_rcu_service # although the name, seems not related to rc auto-pair
 com.tcl.useragreement
 com.tcl.usercenter
 com.tcl.waterfall.overseas
