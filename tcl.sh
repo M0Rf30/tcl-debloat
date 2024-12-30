@@ -1,9 +1,9 @@
 #!/usr/bin/sh
 set -e
 TEMP_DIR=tmp-tcl-debloater
-FLAUNCHER_URL=https://gitlab.com/api/v4/projects/26632151/packages/generic/flauncher/0.18.0/flauncher-0.18.0.apk
-KODI_URL=https://mirrors.kodi.tv/releases/android/arm/kodi-20.2-Nexus-armeabi-v7a.apk
-SMARTTUBE_URL=https://github.com/yuliskov/SmartTubeNext/releases/download/18.92s/SmartTube_stable_18.92_armeabi-v7a.apk
+FLAUNCHER_URL=https://github.com/CocoCR300/flauncher/releases/download/v2024.12.004/flauncher-armeabi-v7a-release.apk
+KODI_URL=https://mirrors.kodi.tv/releases/android/arm/kodi-21.1-Nexus-armeabi-v7a.apk
+SMARTTUBE_URL=https://github.com/yuliskov/SmartTube/releases/download/25.24s/SmartTube_stable_25.24_armeabi-v7a.apk
 
 BLOAT=$(
   cat <<EOF
@@ -23,6 +23,7 @@ com.android.vending
 com.google.android.apps.mediashell
 com.google.android.apps.nbu.smartconnect.tv
 com.google.android.apps.tv.dreamx
+com.google.android.apps.tv.launcherx
 com.google.android.feedback
 com.google.android.gms # V8-R51MT05-LF1V578 requires this for launcherx; not true for V8-R51MT05-LF1V599
 com.google.android.gsf # V8-R51MT05-LF1V578 requires this for launcherx; not true for V8-R51MT05-LF1V599
@@ -36,6 +37,7 @@ com.google.android.play.games
 com.google.android.sss.authbridge
 com.google.android.syncadapters.calendar
 com.google.android.tts
+com.google.android.tungsten.setupwraith
 com.google.android.videos
 com.google.android.youtube.tv
 com.google.android.youtube.tvmusic
@@ -81,6 +83,12 @@ TCL_IP=$(cat)
 adb connect "$TCL_IP" | grep -q fail && echo "Unable to connect to TCL TV" && false
 
 mkdir -p $TEMP_DIR
+
+
+echo "Downloading FLauncher"
+wget $FLAUNCHER_URL -O $TEMP_DIR/flauncher.apk
+echo "Installing FLauncher"
+adb install $TEMP_DIR/flauncher.apk
 
 echo "Downloading Kodi"
 wget $KODI_URL -O $TEMP_DIR/kodi.apk
