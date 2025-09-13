@@ -48,6 +48,7 @@ BLOAT=(
   com.netflix.ninja
   com.tcl.accessibility
   com.tcl.android.webview
+  com.tcl.magiconnectfree
   org.chromium.webview_shell
   tv.wuaki.apptv
 )
